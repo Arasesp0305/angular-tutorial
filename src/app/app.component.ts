@@ -1,25 +1,34 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
-import { AuthComponent } from './components/auth/auth.component';
-import { SiginComponent } from './components/auth/sigin/sigin.component';
-import { LoginComponent } from './components/auth/login/login.component';
-import { ResumeComponent } from './components/task/resume/resume.component';
-import { TaskformComponent } from './components/task/taskform/taskform.component';
 import { TasklistComponent } from './components/task/tasklist/tasklist.component';
+import { TaskformComponent } from './components/task/taskform/taskform.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, FooterComponent, AuthComponent, SiginComponent, LoginComponent, ResumeComponent, TaskformComponent, TasklistComponent,RouterLink],
+  imports: [
+    NavbarComponent,
+    TasklistComponent,
+    FooterComponent,
+    FormsModule,
+    TaskformComponent,
+  ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.css',
 })
 export class AppComponent {
-  title = '@jdufer0405';
+  imagenAleatoria: string = '';
+  nombre: string = '';
+  numero: number = 0;
 
-  randomInt():number{
-    return Math.random()*10;
+  cargarImagenAleatoria() {
+    this.imagenAleatoria =
+      'https://picsum.photos/200/300?random=' + this.randomInt();
+  }
+
+  randomInt(): number {
+    return Math.trunc(Math.random() * 200 + 1);
   }
 }

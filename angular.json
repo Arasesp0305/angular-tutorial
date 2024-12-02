@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "angular-tutorial": {
+    "angular_tutorial": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/angular-tutorial",
+            "outputPath": "dist/angular_tutorial",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -32,7 +32,7 @@
               "node_modules/bootstrap-icons/font/bootstrap-icons.min.css"
             ],
             "scripts": [
-              "node_modules/bootstrap/dist/js/bootstrap.min.js"
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
             ],
             "server": "src/main.server.ts",
             "prerender": true,
@@ -68,10 +68,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "angular-tutorial:build:production"
+              "buildTarget": "angular_tutorial:build:production"
             },
             "development": {
-              "buildTarget": "angular-tutorial:build:development"
+              "buildTarget": "angular_tutorial:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -103,6 +103,6 @@
     }
   },
   "cli": {
-    "analytics": "7877f195-b17a-49cb-baf0-99893a2d6486"
+    "analytics": "f84babe5-9959-4484-b8d6-3897a2e424df"
   }
 }

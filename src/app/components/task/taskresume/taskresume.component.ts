@@ -22,6 +22,17 @@ export class TaskresumeComponent {
     new Date('11/18/2024'),
     false
   );
+  @Input()
+  task: Task = new Task(
+    1,
+    'Tarea 1',
+    'Descripción Tarea 1',
+    TaskPriority.LOW,
+    TaskStatus.PENDING,
+    new Date('11/1/2024'),
+    new Date('11/18/2024'),
+    false
+  );
 
   @Output()
   eventsTaskModify = new EventEmitter<TaskEvent>();

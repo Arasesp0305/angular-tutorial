@@ -1,71 +1,67 @@
-import { CommonModule } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-  SimpleChanges,
-} from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import {
-  customValidator,
-  customValidatorPriority,
-} from './taskform.validators';
-import { Task, TaskStatus } from '../../../models/task.model';
+import {CommonModule} from '@angular/common';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {customValidator, customValidatorPriority} from './taskForm.validators';
+import {Task, TaskStatus} from '../../../models/task.models';
+import {ActivatedRoute, ParamMap} from '@angular/router';
+import {TaskService} from '../../../services/task.service';
 
 @Component({
   selector: 'app-taskform',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './taskform.component.html',
-  styleUrl: './taskform.component.css',
+  styleUrl: './taskform.component.css'
 })
-export class TaskformComponent {
+export class TaskformComponent implements OnChanges, OnInit {
+
   @Input()
   taskToEdit: Task | null = null; // Tarea a editar (null si estamos añadiendo)
-  @Output()
-  saveTask = new EventEmitter<Task>(); // Emitir tarea editada
-  @Output()
-  addTask = new EventEmitter<Task>();
 
-  formTaskEdit: FormGroup;
+  formTaskEdit: FormGroup
 
-  constructor(formBuilder: FormBuilder) {
+  constructor(private taskService: TaskService, private route: ActivatedRoute, formBuilder: FormBuilder) {
     this.formTaskEdit = formBuilder.group({
-      name: ['', [Validators.required, Validators.maxLength(50)]],
-      description: ['', [Validators.required, Validators.maxLength(255)]],
-      priority: ['', [Validators.required, customValidatorPriority()]],
-      expirationDate: ['', [Validators.required, customValidator()]],
-    });
+      'name': ['', [Validators.required, Validators.maxLength(50)]],
+      'description': ['', [Validators.required, Validators.maxLength(255)]],
+      'priority': ['', [Validators.required, customValidatorPriority()]],
+      'expirationDate': ['', [Validators.required, customValidator()]],
+
+    })
   }
+
+  ngOnInit(): void {
+    this.route.paramMap.subscribe((params: ParamMap) => {
+      let id = params.get('id')
+      console.log(id)
+    })
+  }
+
+  @Output() formSubmit = new EventEmitter<Task>();
 
   onSubmit() {
     if (this.formTaskEdit.valid) {
+      const taskData = this.formTaskEdit.value;
+
       if (this.taskToEdit) {
-        // Editar tarea existente
         const updatedTask: Task = {
           ...this.taskToEdit,
-          ...this.formTaskEdit.value,
-          expirationDate: new Date(this.formTaskEdit.value.expirationDate),
+          ...taskData,
+          expirationDate: new Date(taskData.expirationDate),
         };
-        this.saveTask.emit(updatedTask); // Emitir tarea editada
+        this.formSubmit.emit(updatedTask); // Emitir la tarea editada
       } else {
         const newTask: Task = new Task(
-          Math.floor(Math.random() * 10000), // ID aleatorio
-          this.formTaskEdit.value.name,
-          this.formTaskEdit.value.description,
-          this.formTaskEdit.value.priority,
+          Math.floor(Math.random() * 1000000), // ID aleatorio
+          taskData.name,
+          taskData.description,
+          taskData.priority,
           TaskStatus.PENDING,
-          new Date(this.formTaskEdit.value.expirationDate),
+          new Date(taskData.expirationDate),
           new Date(), // Fecha de creación
           false
         );
-        this.addTask.emit(newTask);
+        this.formSubmit.emit(newTask); // Emitir una nueva tarea
       }
 
       this.formTaskEdit.reset();
@@ -73,4 +69,21 @@ export class TaskformComponent {
       console.log('El formulario tiene errores:', this.formTaskEdit.errors);
     }
   }
+
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['taskToEdit'] && changes['taskToEdit'].currentValue) {
+      const task = changes['taskToEdit'].currentValue;
+      this.formTaskEdit.patchValue({
+        name: task.name,
+        description: task.description,
+        priority: task.priority,
+        expirationDate: task.expirationDate.toISOString().slice(0, 16),
+      });
+    } else {
+      this.formTaskEdit.reset(); // Limpiar el formulario si no hay tarea para editar
+    }
+  }
+
+
 }
